@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/prismOkaidia.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@300;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <a class="navbar-brand" href="#"> <i class="far fa-list-alt"></i> Task Manager</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="app.html">The App</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="code.html">See The Code</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/shiori102/mortgageCalculator">Get the
+                            Code</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://shioriportfolio.netlify.app">About Me</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Begin page content -->
+    <div class="container mt-5">
+        <div class="row pt-5 ">
+            <div class="col-10 offset-1 line-numbers border border-dark rounded">
+                <h3>Here's the Code:</h3>
+                <pre><code class="language-javascript">$(function () {
+    prepareLocalStorage();
+    displayTasks();
+});
+
+//PREPARE local storage
+function prepareLocalStorage() {
+    if (getLocalStorage("taskList") == null) {
+        setLocalStorage([]);
+    }
+
+}
+
+//SET local storage
+function setLocalStorage(taskList) {
+    localStorage.setItem("taskList", JSON.stringify(taskList));
+}
+
+//GET local storage
+function getLocalStorage() {
+    return JSON.parse(localStorage.getItem("taskList"));
+}
+
+//generate random id
+function generateId() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0,
+            v = c == "x" ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+
+//delete specific task from the array
+function deleteTask(elem) {
+    id = elem.parentNode.parentNode.getAttribute("data-id");
+    taskLog = getLocalStorage();
+    taskLog.forEach(function (item, index) {
+        if (item.id == id) {
+            console.log(item);
+            taskLog.splice(index, 1);
+        }
+    });
+    setLocalStorage(taskLog);
+    displayTasks();
+};
+
+
+//delete all the tasks from the table
+function clearTasks() {
+    setLocalStorage([]);
+    displayTasks();
+};
+
+//create and add tasks to the table
+function saveTask() {
+    let taskLog = JSON.parse(localStorage.getItem("taskList"));
+    let userDate = document.getElementById("newDate").value;
+    let obj = {
+        title: document.getElementById("newTask").value,
+        created: new Date(),
+        complete: false,
+        dueDate: userDate,
+        id: generateId()
+    };
+
+
+    taskLog.push(obj);
+
+    localStorage.setItem("taskList", JSON.stringify(taskLog));
+
+    displayTasks();
+
+}
+
+function displayDate(date) {
+    return date.toString().split("T")[0];
+}
+
+//complete tasks off list
+function completeTask(elem) {
+    id = elem.parentNode.parentNode.getAttribute("data-id");
+    taskLog = getLocalStorage();
+    taskLog.forEach(function (item, index) {
+        if (item.id == id) {
+            console.log(item);
+            item.complete = true;
+        }
+    });
+    setLocalStorage(taskLog);
+    displayTasks();
+};
+
+function filterTasks(mode) {
+    if (mode == "complete") {
+        hidden = document.querySelectorAll(".hidden");
+        hidden.forEach(function (item) {
+            item.classList.remove("hidden");
+        });
+        incompletes = document.querySelectorAll('tbody tr:not(.complete)');
+        incompletes.forEach(function (item) {
+            item.classList.add("hidden");
+        });
+    }
+
+    if (mode == "incomplete") {
+        hidden = document.querySelectorAll(".hidden");
+        hidden.forEach(function (item) {
+            item.classList.remove("hidden");
+        });
+        completes = document.querySelectorAll('tbody tr.complete');
+        completes.forEach(function (item) {
+            item.classList.add("hidden");
+        });
+    }
+
+    if (mode == null) {
+        hidden = document.querySelectorAll(".hidden");
+        hidden.forEach(function (item) {
+            item.classList.remove("hidden");
+        });
+    }
+}
+
+function editTask() {
+    newID = document.getElementById("newID").value;
+    console.log(newID);
+    let taskLog = JSON.parse(localStorage.getItem("taskList"));
+    let userDate = document.getElementById("editDate").value;
+    let taskName = document.getElementById("taskName").value;
+    taskLog.forEach(function (item, index) {
+        console.log(item);
+        if (item.id == newID) {
+            item.title = taskName;
+            item.dueDate = userDate;
+        }
+
+    });
+
+    setLocalStorage(taskLog);
+    displayTasks();
+
+};
+
+
+function updateModal(elem) {
+    id = elem.parentNode.parentNode.getAttribute("data-id");
+    document.getElementById("newID").value = id;
+}
+
+//display all the tasks onto the table
+function displayTasks() {
+    let taskLog = getLocalStorage()
+    const template = document.getElementById("task-template");
+    const resultsBody = document.getElementById("resultsBody");
+
+    resultsBody.innerHTML = "";
+    for (let i = 0; i < taskLog.length; i++) {
+        const dataRow = document.importNode(template.content, true);
+
+        if (taskLog[i].complete)
+            dataRow.getElementById("taskRow").setAttribute("class", "complete");
+
+        dataRow.getElementById("taskRow").setAttribute("data-id", taskLog[i].id);
+        dataRow.getElementById("title").textContent = taskLog[i].title;
+        dataRow.getElementById("created").textContent = displayDate(taskLog[i].created);
+        dataRow.getElementById("dueDate").textContent = displayDate(taskLog[i].dueDate);
+
+        resultsBody.appendChild(dataRow);
+
+    }
+}
+</code></pre>
+
+            </div>
+        </div>
+    </div>
+
+    </main>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script src="/js/site.js"></script>
+    <script src="/js/prismOkaidia.js"></script>
+</body>
+
+</html>
